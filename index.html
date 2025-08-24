@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prospetto di Investimento Premium</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a2b4c;
+            --secondary-color: #3a7bd5;
+            --accent-color: #00d2ff;
+            --text-color: #2d3748;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #48bb78;
+            --warning-color: #ecc94b;
+            --new-invest-color: #9c27b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        
+        .header-description {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .security-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .security-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .card-badge {
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .badge-low {
+            background: linear-gradient(to right, #48bb78, #68d391);
+        }
+        
+        .badge-medium {
+            background: linear-gradient(to right, #d53f8c, #ed64a6);
+        }
+        
+        .badge-high {
+            background: linear-gradient(to right, #9c27b0, #d53f8c);
+        }
+        
+        .account-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .chart-container {
+            height: 320px;
+            margin: 35px 0;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(58, 123, 213, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(58, 123, 213, 0.4);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .comparison-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+        
+        .conclusion-section {
+            background: linear-gradient(to right, #1a2b4c, #3a7bd5);
+            color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin: 40px 0;
+        }
+        
+        .conclusion-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .conclusion-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .conclusion-content {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .highlight {
+            background: rgba(0, 210, 255, 0.15);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        
+        .security-info {
+            background: rgba(72, 187, 120, 0.1);
+            border-left: 4px solid var(--success-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .security-info h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--success-color);
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .info-box {
+            background: rgba(58, 123, 213, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .info-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .info-box-purple {
+            background: rgba(156, 39, 176, 0.1);
+            border-left: 4px solid var(--new-invest-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .info-box-purple h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--new-invest-color);
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .account-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prospetto di Investimento</h1>
+            <div class="header-subtitle">Piano personalizzato di gestione patrimoniale</div>
+            <div class="header-description">
+                Un approccio innovativo alla crescita finanziaria che unisce tradizione e innovazione, 
+                con massima trasparenza e sicurezza dei tuoi investimenti.
+            </div>
+            
+            <div class="security-card">
+                <div class="security-title">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Sistema di Sicurezza Avanzato</h3>
+                </div>
+                <p>I tuoi conti saranno sempre sotto il tuo controllo totale. Per ogni operazione che richiede l'accesso ai conti, riceverai un codice OTP sul tuo telefono. Senza questo codice, non è possibile effettuare alcuna operazione.</p>
+            </div>
+            
+            <button class="btn">
+                <i class="fas fa-download"></i> Scarica Prospetto Completo
+            </button>
+        </header>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Investimento Tradizionale</h2>
+                    <div class="card-badge badge-low">Basso Rendimento</div>
+                </div>
+                
+                <div class="account-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Investimento iniziale minimo</span>
+                        <span class="detail-value">€10.000</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rendimento annuo atteso</span>
+                        <span class="detail-value">12%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Commissione di gestione</span>
+                        <span class="detail-value">35% sui rendimenti mensili</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Liquidità dei rendimenti</span>
+                        <span class="detail-value">Mensile</span>
+                    </div>
+                </div>
+
+                <div class="security-info">
+                    <h4><i class="fas fa-lock"></i> Sicurezza del Capitale</h4>
+                    <p>I tuoi investimenti sono completamente al sicuro. I fondi vengono gestiti attraverso strutture finanziarie e banche affidabili, con una lunga storia di stabilità e sicurezza. I rendimenti sono generati da attività a basso rischio e il capitale iniziale è preservato attraverso strategie conservative collaudate.</p>
+                </div>
+
+                <h3>Proiezione Rendimenti Mensili</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mese</th>
+                            <th>Rendimento Lordo (€)</th>
+                            <th>Commissione (35%)</th>
+                            <th>Rendimento Netto (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>100.00</td><td>35.00</td><td>65.00</td></tr>
+                        <tr><td>2</td><td>200.00</td><td>70.00</td><td>130.00</td></tr>
+                        <tr><td>3</td><td>300.00</td><td>105.00</td><td>195.00</td></tr>
+                        <tr><td>4</td><td>400.00</td><td>140.00</td><td>260.00</td></tr>
+                        <tr><td>5</td><td>500.00</td><td>175.00</td><td>325.00</td></tr>
+                        <tr><td>6</td><td>600.00</td><td>210.00</td><td>390.00</td></tr>
+                        <tr><td>7</td><td>700.00</td><td>245.00</td><td>455.00</td></tr>
+                        <tr><td>8</td><td>800.00</td><td>280.00</td><td>520.00</td></tr>
+                        <tr><td>9</td><td>900.00</td><td>315.00</td><td>585.00</td></tr>
+                        <tr><td>10</td><td>1000.00</td><td>350.00</td><td>650.00</td></tr>
+                        <tr><td>11</td><td>1100.00</td><td>385.00</td><td>715.00</td></tr>
+                        <tr><td>12</td><td>1200.00</td><td>420.00</td><td>780.00</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-container">
+                    <canvas id="chart1"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Staking Crypto</h2>
+                    <div class="card-badge badge-medium">Medio Rendimento</div>
+                </div>
+                
+                <div class="account-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Investimento iniziale minimo</span>
+                        <span class="detail-value">€10.000</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rendimento annuo atteso</span>
+                        <span class="detail-value">35%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Commissione di gestione</span>
+                        <span class="detail-value">35% sui rendimenti mensili</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Liquidità dei rendimenti</span>
+                        <span class="detail-value">Mensile</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> Cos'è lo Staking Crypto</h4>
+                    <p>Lo staking di criptovalute è una strategia di investimento che ti permette di guadagnare reddito passivo bloccando i tuoi asset digitali per supportare le operazioni di una blockchain. In cambio di questo contributo, che include la validazione delle transazioni e la sicurezza della rete, vieni ricompensato con criptovalute aggiuntive. Questo processo è fondamentale nelle blockchain che utilizzano il meccanismo di consenso Proof-of-Stake (PoS), come Ethereum e Solana, e offre un modo per far crescere il proprio patrimonio senza dover vendere i propri asset.</p>
+                </div>
+
+                <div class="security-info">
+                    <h4><i class="fas fa-lock"></i> Sicurezza del Capitale</h4>
+                    <p>Non è possibile perdere i propri soldi investiti in quanto vengono generati da strutture finanziarie e banche affidabili, aperte da molti anni, con solide fondamenta e un track record comprovato. I profitti sono certi grazie a strategie d'investimento conservative e diversificate che privilegiano la sicurezza del capitale.</p>
+                </div>
+
+                <h3>Proiezione Rendimenti Mensili</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mese</th>
+                            <th>Rendimento Lordo (€)</th>
+                            <th>Commissione (35%)</th>
+                            <th>Rendimento Netto (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>291.67</td><td>102.08</td><td>189.59</td></tr>
+                        <tr><td>2</td><td>583.33</td><td>204.17</td><td>379.16</td></tr>
+                        <tr><td>3</td><td>875.00</td><td>306.25</td><td>568.75</td></tr>
+                        <tr><td>4</td><td>1166.67</td><td>408.33</td><td>758.34</td></tr>
+                        <tr><td>5</td><td>1458.33</td><td>510.42</td><td>947.91</td></tr>
+                        <tr><td>6</td><td>1750.00</td><td>612.50</td><td>1137.50</td></tr>
+                        <tr><td>7</td><td>2041.67</td><td>714.58</td><td>1327.09</td></tr>
+                        <tr><td>8</td><td>2333.33</td><td>816.67</td><td>1516.66</td></tr>
+                        <tr><td>9</td><td>2625.00</td><td>918.75</td><td>1706.25</td></tr>
+                        <tr><td>10</td><td>2916.67</td><td>1020.83</td><td>1895.84</td></tr>
+                        <tr><td>11</td><td>3208.33</td><td>1122.92</td><td>2085.41</td></tr>
+                        <tr><td>12</td><td>3500.00</td><td>1225.00</td><td>2275.00</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-container">
+                    <canvas id="chart2"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Trading Copiando Trader</h2>
+                    <div class="card-badge badge-high">Alto Rendimento</div>
+                </div>
+                
+                <div class="account-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Investimento iniziale minimo</span>
+                        <span class="detail-value">€10.000</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Rendimento annuo atteso</span>
+                        <span class="detail-value">~120%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Commissione di gestione</span>
+                        <span class="detail-value">35% sui rendimenti mensili</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Liquidità dei rendimenti</span>
+                        <span class="detail-value">Mensile</span>
+                    </div>
+                </div>
+
+                <div class="info-box-purple">
+                    <h4><i class="fas fa-info-circle"></i> Cos'è il Copy Trading</h4>
+                    <p>Il copy trading è una strategia di trading online in cui gli investitori (i "follower") copiano automaticamente le operazioni finanziarie eseguite da trader più esperti (i "leader") attraverso una piattaforma specializzata. In pratica, quando un trader scelto esegue un'operazione sul proprio conto, la stessa operazione viene replicata in tempo reale sul conto del follower, in proporzione al capitale investito. Questa modalità permette ai principianti di accedere al mercato senza dover sviluppare strategie proprie, ma comporta rischi significativi legati alle performance passate dei leader e all'uso della leva finanziaria.</p>
+                </div>
+
+                <div class="security-info">
+                    <h4><i class="fas fa-lock"></i> Strategia di Diversificazione</h4>
+                    <p>Investendo €10.000, selezioneremo i migliori 100 trader al mondo e investiremo €100 per ogni trader. Ciò farà in modo che il capitale non possa mai perdere ed avere una crescita costante anche se qualche trader facesse investimento sbagliato.</p>
+                    <p>Distribuzione prevista dei trader:</p>
+                    <ul>
+                        <li>20% dei trader: -30% annuo</li>
+                        <li>30% dei trader: +30% annuo</li>
+                        <li>30% dei trader: +80% annuo</li>
+                        <li>20% dei trader: +400% annuo</li>
+                    </ul>
+                </div>
+
+                <h3>Proiezione Rendimenti Mensili</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mese</th>
+                            <th>Rendimento Lordo (€)</th>
+                            <th>Commissione (35%)</th>
+                            <th>Rendimento Netto (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>1000.00</td><td>350.00</td><td>650.00</td></tr>
+                        <tr><td>2</td><td>2000.00</td><td>700.00</td><td>1300.00</td></tr>
+                        <tr><td>3</td><td>3000.00</td><td>1050.00</td><td>1950.00</td></tr>
+                        <tr><td>4</td><td>4000.00</td><td>1400.00</td><td>2600.00</td></tr>
+                        <tr><td>5</td><td>5000.00</td><td>1750.00</td><td>3250.00</td></tr>
+                        <tr><td>6</td><td>6000.00</td><td>2100.00</td><td>3900.00</td></tr>
+                        <tr><td>7</td><td>7000.00</td><td>2450.00</td><td>4550.00</td></tr>
+                        <tr><td>8</td><td>8000.00</td><td>2800.00</td><td>5200.00</td></tr>
+                        <tr><td>9</td><td>9000.00</td><td>3150.00</td><td>5850.00</td></tr>
+                        <tr><td>10</td><td>10000.00</td><td>3500.00</td><td>6500.00</td></tr>
+                        <tr><td>11</td><td>11000.00</td><td>3850.00</td><td>7150.00</td></tr>
+                        <tr><td>12</td><td>12000.00</td><td>4200.00</td><td>7800.00</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-container">
+                    <canvas id="chart3"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="section-title">Confronto Rendimenti Netto</h2>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <div class="conclusion-section">
+            <h2 class="conclusion-title">Analisi e Considerazioni Finali</h2>
+            <div class="conclusion-content">
+                <p>Il <span class="highlight">Conto di Investimento Tradizionale</span> offre stabilità e sicurezza con rendimenti costanti, ideale per chi cerca una crescita patrimoniale graduale e a basso rischio. I tuoi fondi sono protetti da strategie conservative e il capitale è preservato attraverso investimenti in istituzioni finanziarie solide e affidabili.</p>
+                
+                <p>Il <span class="highlight">Conto Staking Crypto</span> presenta invece opportunità di rendimento più elevate, adatte a investitori con una maggiore propensione al rischio e un orizzonte temporale di lungo periodo. Anche in questo caso, la sicurezza del capitale è garantita da partnership con entità finanziarie consolidate nel settore.</p>
+                
+                <p>Il <span class="highlight">Conto Trading Copiando Trader</span> rappresenta la soluzione più innovativa, con rendimenti potenzialmente molto elevati grazie alla diversificazione tra i migliori trader mondiali. La strategia di investire piccole somme su molti trader diversi riduce significativamente il rischio complessivo.</p>
+                
+                <p>Entrambe le soluzioni applicano una commissione del 35% esclusivamente sui rendimenti generati, garantendo la massima trasparenza e allineando i nostri interessi ai tuoi successi finanziari. Il capitale investito è sempre al sicuro e i rendimenti sono generati attraverso metodologie collaudate.</p>
+                
+                <p>La diversificazione tra i tre conti rappresenta la strategia ottimale per bilanciare opportunità di rendimento e contenimento del rischio, permettendoti di partecipare alla crescita dei mercati più innovativi mantenendo al contempo una solida base di investimenti tradizionali.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Documento creato dal dottor Gessa Marco il 03 maggio 2023 | Prospetto di Investimento</p>
+        </div>
+    </div>
+
+    <script>
+        // Data for charts
+        const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+        
+        // Conto 1 Data (35% commission) - Investimento Tradizionale (12% annuo)
+        const conto1Lordi = [100.00, 200.00, 300.00, 400.00, 500.00, 600.00, 700.00, 800.00, 900.00, 1000.00, 1100.00, 1200.00];
+        const conto1Commissioni = [35.00, 70.00, 105.00, 140.00, 175.00, 210.00, 245.00, 280.00, 315.00, 350.00, 385.00, 420.00];
+        const conto1Netti = [65.00, 130.00, 195.00, 260.00, 325.00, 390.00, 455.00, 520.00, 585.00, 650.00, 715.00, 780.00];
+        
+        // Conto 2 Data (35% commission) - Staking Crypto (35% annuo)
+        const conto2Lordi = [291.67, 583.33, 875.00, 1166.67, 1458.33, 1750.00, 2041.67, 2333.33, 2625.00, 2916.67, 3208.33, 3500.00];
+        const conto2Commissioni = [102.08, 204.17, 306.25, 408.33, 510.42, 612.50, 714.58, 816.67, 918.75, 1020.83, 1122.92, 1225.00];
+        const conto2Netti = [189.59, 379.16, 568.75, 758.34, 947.91, 1137.50, 1327.09, 1516.66, 1706.25, 1895.84, 2085.41, 2275.00];
+        
+        // Conto 3 Data (35% commission) - Trading Copiando Trader (120% annuo)
+        const conto3Lordi = [1000.00, 2000.00, 3000.00, 4000.00, 5000.00, 6000.00, 7000.00, 8000.00, 9000.00, 10000.00, 11000.00, 12000.00];
+        const conto3Commissioni = [350.00, 700.00, 1050.00, 1400.00, 1750.00, 2100.00, 2450.00, 2800.00, 3150.00, 3500.00, 3850.00, 4200.00];
+        const conto3Netti = [650.00, 1300.00, 1950.00, 2600.00, 3250.00, 3900.00, 4550.00, 5200.00, 5850.00, 6500.00, 7150.00, 7800.00];
+        
+        // Chart for Conto 1
+        const ctx1 = document.getElementById('chart1').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Rendimento Lordo',
+                        data: conto1Lordi,
+                        backgroundColor: 'rgba(58, 123, 213, 0.7)',
+                        borderColor: 'rgba(58, 123, 213, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Rendimento Netto Cliente',
+                        data: conto1Netti,
+                        backgroundColor: 'rgba(0, 210, 255, 0.7)',
+                        borderColor: 'rgba(0, 210, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Commissioni (35%)',
+                        data: conto1Commissioni,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Euro (€)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Investimento Tradizionale - Rendimenti Mensili'
+                    }
+                }
+            }
+        });
+        
+        // Chart for Conto 2
+        const ctx2 = document.getElementById('chart2').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Rendimento Lordo',
+                        data: conto2Lordi,
+                        backgroundColor: 'rgba(58, 123, 213, 0.7)',
+                        borderColor: 'rgba(58, 123, 213, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Rendimento Netto Cliente',
+                        data: conto2Netti,
+                        backgroundColor: 'rgba(0, 210, 255, 0.7)',
+                        borderColor: 'rgba(0, 210, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Commissioni (35%)',
+                        data: conto2Commissioni,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Euro (€)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Staking Crypto - Rendimenti Mensili'
+                    }
+                }
+            }
+        });
+        
+        // Chart for Conto 3
+        const ctx3 = document.getElementById('chart3').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Rendimento Lordo',
+                        data: conto3Lordi,
+                        backgroundColor: 'rgba(58, 123, 213, 0.7)',
+                        borderColor: 'rgba(58, 123, 213, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Rendimento Netto Cliente',
+                        data: conto3Netti,
+                        backgroundColor: 'rgba(0, 210, 255, 0.7)',
+                        borderColor: 'rgba(0, 210, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Commissioni (35%)',
+                        data: conto3Commissioni,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Euro (€)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Trading Copiando Trader - Rendimenti Mensili'
+                    }
+                }
+            }
+        });
+        
+        // Comparison chart
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Tradizionale Netto',
+                        data: [65, 195, 390, 650, 975, 1365, 1820, 2340, 2925, 3575, 4290, 5070],
+                        borderColor: 'rgba(58, 123, 213, 1)',
+                        backgroundColor: 'rgba(58, 123, 213, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Staking Crypto Netto',
+                        data: [189.59, 568.75, 1137.50, 1895.84, 2843.75, 3981.25, 5308.34, 6824.99, 8531.24, 10427.08, 12512.49, 14787.49],
+                        borderColor: 'rgba(0, 210, 255, 1)',
+                        backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Copy Trading Netto',
+                        data: [650, 1950, 3900, 6500, 9750, 13650, 18200, 23400, 29250, 35750, 42900, 50700],
+                        borderColor: 'rgba(156, 39, 176, 1)',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Euro (€)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Confronto Rendimenti Netto Cumulati'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
